@@ -1,19 +1,22 @@
 import os.path
+import openai
 import logging
 import sys
+from dotenv import load_dotenv, find_dotenv # Add
+load_dotenv(find_dotenv()) # Add
 
 from llama_index.core import (
     VectorStoreIndex,
     SimpleDirectoryReader,
     StorageContext,
-    load_index_from_storage,
+    load_index_from_storage
 )
 
 from llama_index.llms.openai import OpenAI
 
 llm = OpenAI(
     model="gpt-4o-mini",
-    api_key=os.environ["OPENAI_API_KEY"]  # uses OPENAI_API_KEY env var by default
+    api_key = os.environ["OPENAI_API_KEY"]  # uses OPENAI_API_KEY env var by default
 )
 
 # You can set the level to DEBUG for verbose output, or use level=logging.INFO for less.
@@ -35,5 +38,5 @@ else:
 
 # Either way we can now query the index
 query_engine = index.as_query_engine()
-response = query_engine.query("What is temperature?")
+response = index.as_query_engine(llm=llm).query("What is temperature?")
 print(response)
